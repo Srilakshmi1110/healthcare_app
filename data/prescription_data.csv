@@ -1,0 +1,8 @@
+symptom_keyword,diagnosis,medicine_1,med1_dosage,medicine_2,med2_dosage,medicine_3,med3_dosage
+fever,viral infection,Paracetamol 500mg,1 tablet thrice daily,ORS,200 ml twice daily,Rest,8 hours sleep
+cough,cold & cough,Cetirizine 10mg,1 tablet at night,Steam inhalation,2 times a day,Vitamin C,1 tablet daily
+cold,common cold,Cetirizine 10mg,1 tablet at night,Nasal drops,2 drops thrice daily,Hot water,2 times/day
+headache,migraine,Crocin 650mg,1 tablet twice daily,Suminat 50mg,1 tablet when severe,Caffeine avoid,Avoid triggers
+stomach pain,gastritis,Omeprazole 20mg,1 capsule before food,Digene syrup,10 ml after meals,ORS,200 ml
+vomiting,food poisoning,Ondansetron 4mg,1 tablet when needed,ORS,200 ml frequently,Probiotic,1 capsule daily
+diarrhea,gastroenteritis,ORS,200 ml hourly,Metronidazole 400mg,1 tablet thrice daily,Loperamide,2mg when needed

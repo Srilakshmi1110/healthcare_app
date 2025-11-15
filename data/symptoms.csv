@@ -1,1 +1,51 @@
-
+symptoms,diagnosis
+fever cough cold shivering,Flu
+fever high-temperature cough body pain,Flu
+high fever cough breathlessness,Pneumonia
+tight chest breathing difficulty fever,Pneumonia
+severe cough mucus chest tightness,Bronchitis
+persistent cough chest discomfort,Bronchitis
+cough sore throat runny nose,Common Cold
+sneezing watery eyes runny nose,Common Cold
+migraine headache nausea vomiting,Migraine
+severe headache light sensitivity,Migraine
+joint pain swelling stiffness,Arthritis
+chronic knee pain joint stiffness,Arthritis
+stomach pain diarrhea vomiting,Food Poisoning
+nausea abdominal cramps loose stools,Food Poisoning
+skin rash itching redness,Allergy
+skin swelling redness irritation,Allergy
+chest pain shortness of breath sweating,Heart Attack
+left arm pain chest discomfort,Heart Attack
+fatigue frequent urination thirst,Diabetes
+blurry vision excessive urination,Diabetes
+high fever rash joint pain,Dengue
+bleeding gums fever body ache,Dengue
+dry cough fever loss of taste,COVID-19
+breathlessness fever loss of smell,COVID-19
+back pain muscle cramps fatigue,Body Pain
+general body weakness muscle ache,Body Pain
+ear pain hearing difficulty,Ear Infection
+ear discharge pain,Ear Infection
+burning urination lower abdominal pain,UTI
+frequent urination burning sensation,UTI
+throat pain difficulty swallowing,Tonsillitis
+swollen tonsils fever,Tonsillitis
+itchy eyes sneezing allergic reaction,Allergic Rhinitis
+nasal congestion mild sneezing,Allergic Rhinitis
+severe lower back pain,Lumbar Pain
+radiating pain down the leg,Sciatica
+neck pain stiffness,Neck Strain
+shoulder pain restricted movement,Shoulder Injury
+vomiting dehydration weakness,Gastroenteritis
+bloody stools abdominal pain,Gastroenteritis
+high fever chills body ache,Malaria
+sweating night chills headache,Malaria
+dry skin itching flaky patches,Eczema
+red dry itchy skin,Eczema
+severe stomach cramps constipation,Constipation
+hard stools abdominal discomfort,Constipation
+anxiety restlessness increased heart rate,Anxiety Disorder
+persistent worry nervousness,Anxiety Disorder
+persistent sadness loss of interest,Depression
+low mood fatigue poor sleep,Depression
