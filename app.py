@@ -1,11 +1,11 @@
-# app.py — Telemed Unified AI Assistant (Smart Version)
+# app.py — Telemed Unified AI Assistant (Final Stable Version)
 import streamlit as st
 import pandas as pd
 from datetime import datetime
 import streamlit.components.v1 as components
 
 # -------------------------------------------------------
-# BACKEND IMPORTS (Smart Fallback Mode)
+# BACKEND IMPORTS (Smart + Fallback)
 # -------------------------------------------------------
 BACKEND_AVAILABLE = False
 
@@ -27,59 +27,41 @@ try:
     BACKEND_AVAILABLE = True
 
 except Exception as e:
-    st.sidebar.error(f"Backend import error — Running in Demo Mode: {e}")
+    st.sidebar.error("Backend import error — Demo Mode Enabled")
 
-    # ---------------- DEMO SAFE FALLBACK ----------------
-    def analyze_symptoms(text):
-        if not text.strip():
-            return "No clear symptoms detected."
-        return "Symptoms appear mild. Rest, hydrate, and monitor your health."
-
-    def analyze_mood(text):
-        if not text.strip():
-            return "Your mood seems neutral today."
-        return "You seem a bit stressed. Try deep breathing."
-
-    def analyze_pdf(file):
-        return "PDF analyzed successfully (Demo). No major findings."
-
-    def full_image_analysis(img):
+    # FALLBACK SAFE MODE
+    def analyze_symptoms(t): return "Symptoms appear mild."
+    def analyze_mood(t): return "Your mood seems neutral today."
+    def analyze_pdf(t): return "PDF processed. No major findings."
+    def full_image_analysis(x):
         return {
             "medical_label": "Normal",
-            "medical_confidence": 0.82,
+            "medical_confidence": 0.8,
             "emotion": "Neutral",
             "mental_state": "Stable"
         }
-
-    def medvit_biobert_pipeline(img, text):
+    def medvit_biobert_pipeline(i, t):
         return {
             "medical_label": "Normal",
-            "medical_confidence": 0.77,
-            "text_diagnosis": analyze_symptoms(text),
-            "text_confidence": 0.71
+            "medical_confidence": 0.76,
+            "text_diagnosis": "Mild condition",
+            "text_confidence": 0.70
         }
-
     def chat_to_prescription(x):
         return {
             "diagnosis": "Mild Viral Infection",
-            "medicines": ["Paracetamol 500mg — 2 times daily", "ORS — as needed"]
+            "medicines": ["Paracetamol 500mg — twice daily"]
         }
 
     def save_appointment(a, b, c, d): return True
     def get_appointments(): return pd.DataFrame()
     def get_meet_link(): return "https://meet.jit.si/demo-room"
-
-    def generate_pdf(a, b): return b"Demo PDF Report"
-
-    def generate_prescription_pdf(patient, doctor, symptoms, diagnosis, medicines):
-        txt = f"Prescription\nPatient: {patient}\nDiagnosis: {diagnosis}\nMedicines:\n"
-        for m in medicines: txt += f"- {m}\n"
-        return txt.encode()
-
-    def add_user(username, password): return True
-    def validate_user(username, password): return True
-    def add_history(user, t, d): return None
-    def get_history(user): return []
+    def generate_pdf(a, b): return b"DEMO PDF"
+    def generate_prescription_pdf(a, b, c, d, e): return b"DEMO PRESCRIPTION"
+    def add_user(a, b): return True
+    def validate_user(a, b): return True
+    def add_history(a, b, c): return None
+    def get_history(a): return []
 
 
 # -------------------------------------------------------
@@ -93,12 +75,10 @@ if "current_user" not in st.session_state:
     st.session_state.current_user = None
 if "jitsi_room" not in st.session_state:
     st.session_state.jitsi_room = None
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
 
 
 # -------------------------------------------------------
-# JITSI VIDEO MEET
+# JITSI VIDEO EMBED
 # -------------------------------------------------------
 def embed_jitsi(room):
     components.html(
@@ -107,7 +87,7 @@ def embed_jitsi(room):
                 style="width:100%; height:600px; border:none;">
         </iframe>
         """,
-        height=600
+        height=600,
     )
 
 
@@ -130,12 +110,12 @@ if not st.session_state.logged_in:
                 st.session_state.current_user = u
                 st.rerun()
             else:
-                st.error("Invalid username or password.")
+                st.error("Invalid username or password")
 
     # REGISTER TAB
     with tab2:
-        new_u = st.text_input("Create Username")
-        new_p = st.text_input("Create Password", type="password")
+        new_u = st.text_input("New Username")
+        new_p = st.text_input("New Password", type="password")
 
         if st.button("Register"):
             if add_user(new_u, new_p):
@@ -169,60 +149,79 @@ page = st.sidebar.radio(
 
 if st.sidebar.button("Logout"):
     st.session_state.logged_in = False
-    st.session_state.current_user = None
-    st.session_state.chat_history = []
     st.rerun()
 
 
 # -------------------------------------------------------
-# PAGES
+# HOME PAGE
 # -------------------------------------------------------
-
-# HOME
 if page == "Home":
     st.title("Telemed Unified AI Assistant")
-    st.write("This app offers AI-based medical assistance, telemedicine, prescriptions, and more.")
+    st.write("Your all-in-one AI-powered healthcare assistant.")
 
 
+# -------------------------------------------------------
 # SYMPTOM CHECKER
+# -------------------------------------------------------
 elif page == "Symptom Checker":
     st.title("Symptom Checker")
 
     text = st.text_area("Describe your symptoms")
 
+    if "symptom_result" not in st.session_state:
+        st.session_state.symptom_result = None
+
     if st.button("Analyze Symptoms"):
-        if not text.strip(): text = "no symptoms"
-        result = analyze_symptoms(text)
-        st.success(result)
-        add_history(st.session_state.current_user, "Symptom Analysis", result)
+        if not text.strip():
+            text = "no symptoms"
+        st.session_state.symptom_result = analyze_symptoms(text)
+
+    if st.session_state.symptom_result:
+        st.info(st.session_state.symptom_result)
 
 
-# MENTAL HEALTH
+# -------------------------------------------------------
+# MENTAL HEALTH ANALYZER
+# -------------------------------------------------------
 elif page == "Mental Health":
     st.title("Mental Health Analyzer")
 
     text = st.text_area("How are you feeling today?")
 
+    if "mood_result" not in st.session_state:
+        st.session_state.mood_result = None
+
     if st.button("Analyze Mood"):
-        if not text.strip(): text = "no input"
-        result = analyze_mood(text)
-        st.info(result)
-        add_history(st.session_state.current_user, "Mood Analysis", result)
+        if not text.strip():
+            text = "no input"
+        st.session_state.mood_result = analyze_mood(text)
+
+    if st.session_state.mood_result:
+        st.success(st.session_state.mood_result)
 
 
+# -------------------------------------------------------
 # PDF ANALYZER
+# -------------------------------------------------------
 elif page == "PDF Analyzer":
     st.title("PDF Analyzer")
 
     file = st.file_uploader("Upload PDF", type="pdf")
 
-    if file:
-        result = analyze_pdf(file)
-        st.text_area("PDF Result", result, height=300)
-        add_history(st.session_state.current_user, "PDF Analysis", result)
+    if "pdf_result" not in st.session_state:
+        st.session_state.pdf_result = None
+
+    if st.button("Analyze PDF"):
+        if file:
+            st.session_state.pdf_result = analyze_pdf(file)
+
+    if st.session_state.pdf_result:
+        st.text_area("PDF Result", st.session_state.pdf_result, height=300)
 
 
+# -------------------------------------------------------
 # APPOINTMENTS
+# -------------------------------------------------------
 elif page == "Appointments":
     st.title("Appointments")
 
@@ -234,13 +233,14 @@ elif page == "Appointments":
     if st.button("Save Appointment"):
         save_appointment(name, str(date), str(time), notes)
         st.success("Appointment saved successfully.")
-        add_history(st.session_state.current_user, "Appointment", name)
 
     st.subheader("All Appointments")
     st.dataframe(get_appointments())
 
 
-# TELEMEDICINE
+# -------------------------------------------------------
+# TELEMEDICINE PAGE
+# -------------------------------------------------------
 elif page == "Telemedicine":
     st.title("Telemedicine Video Call")
 
@@ -253,61 +253,79 @@ elif page == "Telemedicine":
         embed_jitsi(st.session_state.jitsi_room)
 
 
+# -------------------------------------------------------
 # PATIENT HISTORY
+# -------------------------------------------------------
 elif page == "Patient History":
     st.title("Patient History")
 
     df = pd.DataFrame(get_history(st.session_state.current_user))
     if df.empty:
-        st.info("No history available.")
+        st.info("No history found.")
     else:
         st.dataframe(df)
 
 
+# -------------------------------------------------------
 # PRESCRIPTION GENERATOR
+# -------------------------------------------------------
 elif page == "Prescription":
     st.title("Prescription Generator")
 
     patient = st.text_input("Patient Name", st.session_state.current_user)
     symptoms = st.text_area("Symptoms")
     diagnosis = st.text_input("Diagnosis")
-    meds_raw = st.text_area("Medicines (1 per line)")
+    meds_raw = st.text_area("Medicines (one per line)")
     doctor = st.text_input("Doctor Name", "Dr. Kavya")
 
     if st.button("Generate Prescription PDF"):
         meds = [m.strip() for m in meds_raw.split("\n") if m.strip()]
         pdf = generate_prescription_pdf(patient, doctor, symptoms, diagnosis, meds)
+
         st.download_button("Download Prescription", pdf, "prescription.pdf")
 
 
+# -------------------------------------------------------
 # CHAT PRESCRIPTION AI
+# -------------------------------------------------------
 elif page == "Chat Prescription AI":
     st.title("AI Doctor Chat")
 
-    msg = st.text_input("Your message / symptoms")
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+
+    msg = st.text_input("Describe your issue")
 
     if st.button("Send"):
         if msg.strip():
             out = chat_to_prescription(msg)
-            ai_reply = f"Diagnosis: {out['diagnosis']}\nMedicines:\n" + "\n".join([f"- {m}" for m in out["medicines"]])
-
+            ai_reply = (
+                f"Diagnosis: {out['diagnosis']}\n"
+                f"Medicines:\n" +
+                "\n".join([f"- {m}" for m in out["medicines"]])
+            )
             st.session_state.chat_history.append(("You", msg))
             st.session_state.chat_history.append(("AI Doctor", ai_reply))
 
-    for sender, text in st.session_state.chat_history:
-        st.write(f"{sender}:** {text}")
+    for sender, msg in st.session_state.chat_history:
+        st.write(f"{sender}:** {msg}")
 
 
-# IMAGE + TEXT ANALYZER
+# -------------------------------------------------------
+# MULTIMODAL IMAGE + TEXT ANALYZER
+# -------------------------------------------------------
 elif page == "Image + Text Analyzer":
-    st.title("Multimodal AI (Image + Text)")
+    st.title("Multimodal AI")
 
-    img = st.file_uploader("Upload an image", type=["png", "jpg", "jpeg"])
-    txt = st.text_area("Describe symptoms")
+    img = st.file_uploader("Upload Image", type=["png", "jpg", "jpeg"])
+    txt = st.text_area("Enter symptoms / description")
+
+    if "multi_result" not in st.session_state:
+        st.session_state.multi_result = None
 
     if st.button("Analyze"):
-        if img is None:
-            st.error("Please upload an image first.")
-        else:
-            result = medvit_biobert_pipeline(img, txt)
-            st.success(result)
+        if img:
+            st.session_state.multi_result = medvit_biobert_pipeline(img, txt)
+
+    if st.session_state.multi_result:
+        st.json(st.session_state.multi_result)
